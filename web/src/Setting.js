@@ -28,6 +28,7 @@ import * as path from "path-browserify";
 
 const {Option} = Select;
 
+// export const ServerUrl = "/casdoorbe";
 export const ServerUrl = "";
 
 // export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
