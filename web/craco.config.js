@@ -1,11 +1,14 @@
 const CracoLessPlugin = require("craco-less");
+const { whenProd } = require("@craco/craco");
 
 module.exports = {
+
   devServer: {
     proxy: {
       "/api": {
-        target: "http://localhost:8000",
+        target: "https://casdoor.finogeeks.club",
         changeOrigin: true,
+        prefix: 'casdoor'
       },
       "/swagger": {
         target: "http://localhost:8000",

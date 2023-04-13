@@ -191,11 +191,12 @@ class App extends Component {
   }
 
   getLogo(themes) {
-    if (themes.includes("dark")) {
-      return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
-    } else {
-      return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
-    }
+    return "https://finclip-testing.finogeeks.club/img/finclip_nav_logo_color.51ad18ab.png";
+    // if (themes.includes("dark")) {
+    //   return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
+    // } else {
+    //   return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256.png`;
+    // }
   }
 
   setLanguage(account) {
@@ -568,7 +569,7 @@ class App extends Component {
         <Header style={{padding: "0", marginBottom: "3px", backgroundColor: this.state.themeAlgorithm.includes("dark") ? "black" : "white"}}>
           {Setting.isMobile() ? null : (
             <Link to={"/"}>
-              <div className="logo" style={{background: `url(${this.state.logo})`}} />
+              <div className="logo" style={{backgroundImage: `url(${this.state.logo})`}} />
             </Link>
           )}
           {Setting.isMobile() ?
@@ -621,7 +622,7 @@ class App extends Component {
             textAlign: "center",
           }
         }>
-            Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"20px"} alt={"Casdoor"} src={this.state.logo} /></a>
+            Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"30px"} alt={"Casdoor"} src={this.state.logo} /></a>
         </Footer>
       </React.Fragment>
     );
