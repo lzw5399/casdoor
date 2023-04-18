@@ -29,7 +29,7 @@ import * as path from "path-browserify";
 const {Option} = Select;
 
 // export const ServerUrl = "/casdoorbe";
-export const ServerUrl = `${location.origin}/casdoor`;
+export const ServerUrl = `${location.origin}/auth`;
 
 // export const StaticBaseUrl = "https://cdn.jsdelivr.net/gh/casbin/static";
 export const StaticBaseUrl = "https://cdn.casbin.org";

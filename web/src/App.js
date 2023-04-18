@@ -633,12 +633,13 @@ class App extends Component {
   }
 
   isEntryPages() {
-    return window.location.pathname.startsWith("/signup") ||
-        window.location.pathname.startsWith("/login") ||
-        window.location.pathname.startsWith("/forget") ||
-        window.location.pathname.startsWith("/prompt") ||
-        window.location.pathname.startsWith("/cas") ||
-        window.location.pathname.startsWith("/auto-signup");
+    const prefix = "/auth";
+    return window.location.pathname.startsWith(`${prefix}/signup`) ||
+        window.location.pathname.startsWith(`${prefix}/login`) ||
+        window.location.pathname.startsWith(`${prefix}/forget`) ||
+        window.location.pathname.startsWith(`${prefix}/prompt`) ||
+        window.location.pathname.startsWith(`${prefix}/cas`) ||
+        window.location.pathname.startsWith(`${prefix}/auto-signup`);
   }
 
   renderPage() {
