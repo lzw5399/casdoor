@@ -1,8 +1,11 @@
 const CracoLessPlugin = require("craco-less");
-const { whenProd } = require("@craco/craco");
-
+const path = require('path');
 module.exports = {
-
+  webpack: {
+    alias: {
+      '@': path.resolve(__dirname, 'src/')
+    }
+  },
   devServer: {
     proxy: {
       "/api": {
