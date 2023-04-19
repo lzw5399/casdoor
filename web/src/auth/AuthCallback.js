@@ -107,7 +107,7 @@ class AuthCallback extends React.Component {
     const samlRequest = innerParams.get("SAMLRequest");
     const casService = innerParams.get("service");
 
-    const redirectUri = `${window.location.origin}/callback`;
+    const redirectUri = `${window.location.origin}${Setting.routePrefix}/callback`;
 
     const body = {
       type: this.getResponseType(),
