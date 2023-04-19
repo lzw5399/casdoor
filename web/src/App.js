@@ -72,7 +72,7 @@ import AdapterEditPage from "./AdapterEditPage";
 import {withTranslation} from "react-i18next";
 import ThemeSelect from "./common/select/ThemeSelect";
 import SessionListPage from "./SessionListPage";
-
+import logoImg from "@/images/finclip.png";
 const {Header, Footer, Content} = Layout;
 
 class App extends Component {
@@ -87,6 +87,7 @@ class App extends Component {
       themeAlgorithm: ["default"],
       themeData: Conf.ThemeDefault,
       logo: this.getLogo(Setting.getAlgorithmNames(Conf.ThemeDefault)),
+      routePrefix: Setting.routePrefix,
     };
 
     Setting.initServerUrl();
@@ -191,7 +192,7 @@ class App extends Component {
   }
 
   getLogo(themes) {
-    return "https://finclip-testing.finogeeks.club/img/finclip_nav_logo_color.51ad18ab.png";
+    return logoImg;
     // if (themes.includes("dark")) {
     //   return `${Setting.StaticBaseUrl}/img/casdoor-logo_1185x256_dark.png`;
     // } else {
@@ -486,8 +487,8 @@ class App extends Component {
   }
 
   isStartPages() {
-    return window.location.pathname.startsWith("/login") ||
-        window.location.pathname.startsWith("/signup") ||
+    return window.location.pathname.startsWith(this.getRouteWithPrefix("/login")) ||
+        window.location.pathname.startsWith(this.getRouteWithPrefix("/signup")) ||
         window.location.pathname === "/";
   }
 
@@ -622,24 +623,27 @@ class App extends Component {
             textAlign: "center",
           }
         }>
-            Powered by <a target="_blank" href="https://casdoor.org" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"30px"} alt={"Casdoor"} src={this.state.logo} /></a>
+            Powered by <a target="_blank" rel="noreferrer"><img style={{paddingBottom: "3px"}} height={"30px"} src={this.state.logo} /></a>
         </Footer>
       </React.Fragment>
     );
   }
 
   isDoorPages() {
-    return this.isEntryPages() || window.location.pathname.startsWith("/callback");
+    return this.isEntryPages() || window.location.pathname.startsWith(this.getRouteWithPrefix("/callback"));
+  }
+
+  getRouteWithPrefix(route) {
+    return `${this.state.routePrefix}${route}`;
   }
 
   isEntryPages() {
-    const prefix = "/auth";
-    return window.location.pathname.startsWith(`${prefix}/signup`) ||
-        window.location.pathname.startsWith(`${prefix}/login`) ||
-        window.location.pathname.startsWith(`${prefix}/forget`) ||
-        window.location.pathname.startsWith(`${prefix}/prompt`) ||
-        window.location.pathname.startsWith(`${prefix}/cas`) ||
-        window.location.pathname.startsWith(`${prefix}/auto-signup`);
+    return window.location.pathname.startsWith(this.getRouteWithPrefix("/signup")) ||
+        window.location.pathname.startsWith(this.getRouteWithPrefix("/login")) ||
+        window.location.pathname.startsWith(this.getRouteWithPrefix("/forget")) ||
+        window.location.pathname.startsWith(this.getRouteWithPrefix("/prompt")) ||
+        window.location.pathname.startsWith(this.getRouteWithPrefix("/cas")) ||
+        window.location.pathname.startsWith(this.getRouteWithPrefix("/auto-signup"));
   }
 
   renderPage() {

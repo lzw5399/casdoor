@@ -21,6 +21,8 @@ import "./index.css";
 import "./App.less";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
+import * as Setting from "./Setting";
+
 import {BrowserRouter} from "react-router-dom";
 import "./backend/FetchFilter";
 
@@ -28,7 +30,7 @@ const container = document.getElementById("root");
 
 const app = createRoot(container);
 
-app.render(<BrowserRouter basename="/auth" >
+app.render(<BrowserRouter basename={Setting.routePrefix} >
   <App />
 </BrowserRouter>);
 

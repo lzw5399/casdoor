@@ -27,7 +27,7 @@ code {
 }
 
 .logo {
-  background: url("https://cdn.casbin.org/img/casdoor-logo_1185x256.png");
+  background: url("~@/images/finclip.png");
   background-size: cover;
   width: 130px;
   height: 39px;
