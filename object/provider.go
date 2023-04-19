@@ -221,6 +221,10 @@ func UpdateProvider(id string, provider *Provider) bool {
 	if provider.ClientSecret2 == "***" {
 		session = session.Omit("client_secret2")
 	}
+
+	provider.Endpoint = util.GetEndPoint(provider.Endpoint)
+	provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
+
 	affected, err := session.Update(provider)
 	if err != nil {
 		panic(err)
@@ -230,6 +234,9 @@ func UpdateProvider(id string, provider *Provider) bool {
 }
 
 func AddProvider(provider *Provider) bool {
+	provider.Endpoint = util.GetEndPoint(provider.Endpoint)
+	provider.IntranetEndpoint = util.GetEndPoint(provider.IntranetEndpoint)
+
 	affected, err := adapter.Engine.Insert(provider)
 	if err != nil {
 		panic(err)
@@ -256,7 +263,11 @@ func (p *Provider) getPaymentProvider() (pp.PaymentProvider, *Cert, error) {
 		}
 	}
 
-	pProvider := pp.GetPaymentProvider(p.Type, p.ClientId, p.ClientSecret, p.Host, cert.Certificate, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey)
+	pProvider, err := pp.GetPaymentProvider(p.Type, p.ClientId, p.ClientSecret, p.Host, cert.Certificate, cert.PrivateKey, cert.AuthorityPublicKey, cert.AuthorityRootPublicKey, p.ClientId2)
+	if err != nil {
+		return nil, cert, err
+	}
+
 	if pProvider == nil {
 		return nil, cert, fmt.Errorf("the payment provider type: %s is not supported", p.Type)
 	}

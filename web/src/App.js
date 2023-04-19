@@ -17,7 +17,7 @@ import "./App.less";
 import {Helmet} from "react-helmet";
 import * as Setting from "./Setting";
 import {StyleProvider, legacyLogicalPropertiesTransformer} from "@ant-design/cssinjs";
-import {BarsOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
+import {BarsOutlined, CommentOutlined, DownOutlined, InfoCircleFilled, LogoutOutlined, SettingOutlined} from "@ant-design/icons";
 import {Alert, Avatar, Button, Card, ConfigProvider, Drawer, Dropdown, FloatButton, Layout, Menu, Result} from "antd";
 import {Link, Redirect, Route, Switch, withRouter} from "react-router-dom";
 import OrganizationListPage from "./OrganizationListPage";
@@ -44,6 +44,11 @@ import SyncerListPage from "./SyncerListPage";
 import SyncerEditPage from "./SyncerEditPage";
 import CertListPage from "./CertListPage";
 import CertEditPage from "./CertEditPage";
+import ChatListPage from "./ChatListPage";
+import ChatEditPage from "./ChatEditPage";
+import ChatPage from "./ChatPage";
+import MessageEditPage from "./MessageEditPage";
+import MessageListPage from "./MessageListPage";
 import ProductListPage from "./ProductListPage";
 import ProductEditPage from "./ProductEditPage";
 import ProductBuyPage from "./ProductBuyPage";
@@ -136,16 +141,22 @@ class App extends Component {
       this.setState({selectedMenuKey: "/applications"});
     } else if (uri.includes("/resources")) {
       this.setState({selectedMenuKey: "/resources"});
-    } else if (uri.includes("/tokens")) {
-      this.setState({selectedMenuKey: "/tokens"});
     } else if (uri.includes("/records")) {
       this.setState({selectedMenuKey: "/records"});
+    } else if (uri.includes("/tokens")) {
+      this.setState({selectedMenuKey: "/tokens"});
+    } else if (uri.includes("/sessions")) {
+      this.setState({selectedMenuKey: "/sessions"});
     } else if (uri.includes("/webhooks")) {
       this.setState({selectedMenuKey: "/webhooks"});
     } else if (uri.includes("/syncers")) {
       this.setState({selectedMenuKey: "/syncers"});
     } else if (uri.includes("/certs")) {
       this.setState({selectedMenuKey: "/certs"});
+    } else if (uri.includes("/chats")) {
+      this.setState({selectedMenuKey: "/chats"});
+    } else if (uri.includes("/messages")) {
+      this.setState({selectedMenuKey: "/messages"});
     } else if (uri.includes("/products")) {
       this.setState({selectedMenuKey: "/products"});
     } else if (uri.includes("/payments")) {
@@ -317,12 +328,17 @@ class App extends Component {
     items.push(Setting.getItem(<><SettingOutlined />&nbsp;&nbsp;{i18next.t("account:My Account")}</>,
       "/account"
     ));
+    items.push(Setting.getItem(<><CommentOutlined />&nbsp;&nbsp;{i18next.t("account:Chats & Messages")}</>,
+      "/chat"
+    ));
     items.push(Setting.getItem(<><LogoutOutlined />&nbsp;&nbsp;{i18next.t("account:Logout")}</>,
       "/logout"));
 
     const onClick = (e) => {
       if (e.key === "/account") {
         this.props.history.push("/account");
+      } else if (e.key === "/chat") {
+        this.props.history.push("/chat");
       } else if (e.key === "/logout") {
         this.logout();
       }
@@ -413,6 +429,14 @@ class App extends Component {
 
       res.push(Setting.getItem(<Link to="/providers">{i18next.t("general:Providers")}</Link>,
         "/providers"
+      ));
+
+      res.push(Setting.getItem(<Link to="/chats">{i18next.t("general:Chats")}</Link>,
+        "/chats"
+      ));
+
+      res.push(Setting.getItem(<Link to="/messages">{i18next.t("general:Messages")}</Link>,
+        "/messages"
       ));
 
       res.push(Setting.getItem(<Link to="/resources">{i18next.t("general:Resources")}</Link>,
@@ -529,6 +553,11 @@ class App extends Component {
         <Route exact path="/syncers/:syncerName" render={(props) => this.renderLoginIfNotLoggedIn(<SyncerEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/certs" render={(props) => this.renderLoginIfNotLoggedIn(<CertListPage account={this.state.account} {...props} />)} />
         <Route exact path="/certs/:certName" render={(props) => this.renderLoginIfNotLoggedIn(<CertEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/chats" render={(props) => this.renderLoginIfNotLoggedIn(<ChatListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/chats/:chatName" render={(props) => this.renderLoginIfNotLoggedIn(<ChatEditPage account={this.state.account} {...props} />)} />
+        <Route exact path="/chat" render={(props) => this.renderLoginIfNotLoggedIn(<ChatPage account={this.state.account} {...props} />)} />
+        <Route exact path="/messages" render={(props) => this.renderLoginIfNotLoggedIn(<MessageListPage account={this.state.account} {...props} />)} />
+        <Route exact path="/messages/:messageName" render={(props) => this.renderLoginIfNotLoggedIn(<MessageEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/products" render={(props) => this.renderLoginIfNotLoggedIn(<ProductListPage account={this.state.account} {...props} />)} />
         <Route exact path="/products/:productName" render={(props) => this.renderLoginIfNotLoggedIn(<ProductEditPage account={this.state.account} {...props} />)} />
         <Route exact path="/products/:productName/buy" render={(props) => this.renderLoginIfNotLoggedIn(<ProductBuyPage account={this.state.account} {...props} />)} />
@@ -602,7 +631,7 @@ class App extends Component {
           }
         </Header>
         <Content style={{display: "flex", flexDirection: "column"}} >
-          {Setting.isMobile() ?
+          {(Setting.isMobile() || window.location.pathname === "/chat") ?
             this.renderRouter() :
             <Card className="content-warp-card">
               {this.renderRouter()}

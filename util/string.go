@@ -95,6 +95,15 @@ func GetOwnerAndNameFromId(id string) (string, string) {
 	return tokens[0], tokens[1]
 }
 
+func GetOwnerFromId(id string) string {
+	tokens := strings.Split(id, "/")
+	if len(tokens) != 2 {
+		panic(errors.New("GetOwnerAndNameFromId() error, wrong token count for ID: " + id))
+	}
+
+	return tokens[0]
+}
+
 func GetOwnerAndNameFromIdNoCheck(id string) (string, string) {
 	tokens := strings.SplitN(id, "/", 2)
 	return tokens[0], tokens[1]
@@ -249,4 +258,12 @@ func maskString(str string) string {
 	} else {
 		return fmt.Sprintf("%c%s%c", str[0], strings.Repeat("*", len(str)-2), str[len(str)-1])
 	}
+}
+
+// GetEndPoint remove scheme from url
+func GetEndPoint(endpoint string) string {
+	for _, prefix := range []string{"https://", "http://"} {
+		endpoint = strings.TrimPrefix(endpoint, prefix)
+	}
+	return endpoint
 }
