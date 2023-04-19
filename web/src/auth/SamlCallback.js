@@ -64,7 +64,7 @@ class SamlCallback extends React.Component {
       provider: providerName,
       state: state,
       application: application,
-      redirectUri: `${window.location.origin}/callback`,
+      redirectUri: `${window.location.origin}${Setting.routePrefix}/callback`,
       method: "signup",
       relayState: relayState,
       samlResponse: encodeURIComponent(samlResponse),
