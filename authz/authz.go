@@ -82,6 +82,7 @@ p, app, *, *, *, *, *
 p, *, *, POST, /api/signup, *, *
 p, *, *, GET, /api/get-email-and-phone, *, *
 p, *, *, POST, /api/login, *, *
+p, *, *, POST, /api/loginv2, *, *
 p, *, *, GET, /api/get-app-login, *, *
 p, *, *, POST, /api/logout, *, *
 p, *, *, GET, /api/logout, *, *

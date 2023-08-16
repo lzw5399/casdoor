@@ -209,6 +209,87 @@ func isProxyProviderType(providerType string) bool {
 	return false
 }
 
+// LoginV2
+// @Title LoginV2
+// @Tag LoginV2 API
+// @Description login
+// @Param   form   body   controllers.RequestForm  true        "Login information"
+// @Success 200 {object} Response The Response object
+// @router /loginv2 [post]
+func (c *ApiController) LoginV2() {
+	resp := &Response{}
+
+	var form RequestForm
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &form)
+	if err != nil {
+		c.ResponseError(err.Error())
+		return
+	}
+
+	if form.Username == "" {
+		c.ResponseError("username cannot be empty")
+	}
+
+	if form.Password == "" {
+		c.ResponseError("password cannot be empty")
+	}
+
+	if form.Type == ResponseTypeLogin {
+		if c.GetSessionUsername() != "" {
+			c.ResponseError(c.T("account:Please sign out first"), c.GetSessionUsername())
+			return
+		}
+	}
+
+	var user *object.User
+	var msg string
+	application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+	if application == nil {
+		c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), form.Application))
+		return
+	}
+	if !application.EnablePassword {
+		c.ResponseError(c.T("auth:The login method: login with password is not enabled for the application"))
+		return
+	}
+
+	if object.CheckToEnableCaptcha(application) {
+		isHuman, err := captcha.VerifyCaptchaByCaptchaType(form.CaptchaType, form.CaptchaToken, form.ClientSecret)
+		if err != nil {
+			c.ResponseError(err.Error())
+			return
+		}
+
+		if !isHuman {
+			c.ResponseError(c.T("verification:Turing test failed."))
+			return
+		}
+	}
+
+	password := form.Password
+	user, msg = object.CheckUserPasswordV2(form.Organization, form.Username, password, c.GetAcceptLanguage())
+
+	if msg != "" {
+		resp = &Response{Status: "error", Msg: msg}
+	} else {
+		application := object.GetApplication(fmt.Sprintf("admin/%s", form.Application))
+		if application == nil {
+			c.ResponseError(fmt.Sprintf(c.T("auth:The application: %s does not exist"), form.Application))
+			return
+		}
+
+		resp = c.HandleLoggedIn(application, user, &form)
+
+		record := object.NewRecord(c.Ctx)
+		record.Organization = application.Organization
+		record.User = user.Name
+		util.SafeGoroutine(func() { object.AddRecord(record) })
+	}
+
+	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
 // Login ...
 // @Title Login
 // @Tag Login API

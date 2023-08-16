@@ -15,6 +15,7 @@
 package object
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"regexp"
 	"strings"
@@ -186,6 +187,62 @@ func CheckPassword(user *User, password string, lang string) string {
 	} else {
 		return fmt.Sprintf(i18n.Translate(lang, "check:unsupported password type: %s"), organization.PasswordType)
 	}
+}
+
+func CheckUserPasswordV2(organization string, username string, password string, lang string) (*User, string) {
+	user := GetUserByFields(organization, username)
+	if user == nil || user.IsDeleted == true {
+		return nil, fmt.Sprintf(i18n.Translate(lang, "general:The user: %s doesn't exist"), util.GetId(organization, username))
+	}
+
+	if user.IsForbidden {
+		return nil, i18n.Translate(lang, "check:The user is forbidden to sign in, please contact the administrator")
+	}
+
+	if user.Ldap != "" {
+		// ONLY for ldap users
+		if msg := checkLdapUserPassword(user, password, lang); msg != "" {
+			if msg == "user not exist" {
+				return nil, fmt.Sprintf(i18n.Translate(lang, "check:The user: %s doesn't exist in LDAP server"), username)
+			}
+			return nil, msg
+		}
+	} else {
+		// 这里直接进行匹配检测
+		part1Pwd, part2Pwd := GetClientPwd(password)
+		isMatch, _ := CheckUpdatePwd(part1Pwd, part2Pwd, user.Password)
+		if isMatch {
+			return user, ""
+		}
+
+		return nil, "account or password is incorrect"
+	}
+	return user, ""
+}
+
+func GetClientPwd(pwd string) (string, string) {
+	ss := strings.Split(pwd, "_")
+	if len(ss) == 2 {
+		return ss[0], ss[1]
+	} else {
+		return ss[0], ""
+	}
+}
+
+func CheckUpdatePwd(part1Pwd, part2Pwd, dbPwd string) (bool, bool) {
+	if part1Pwd == dbPwd {
+		return true, false
+	}
+	if part2Pwd == Sha256Pwd(dbPwd) {
+		return true, true
+	}
+	return false, false
+}
+
+func Sha256Pwd(pwd string) string {
+	firstSha256 := fmt.Sprintf("%x", sha256.Sum256([]byte(pwd)))
+	secondSha256 := fmt.Sprintf("%x", sha256.Sum256([]byte(firstSha256)))
+	return secondSha256
 }
 
 func checkLdapUserPassword(user *User, password string, lang string) string {

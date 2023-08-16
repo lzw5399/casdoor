@@ -46,6 +46,7 @@ func initAPI() {
 
 	beego.Router("/api/signup", &controllers.ApiController{}, "POST:Signup")
 	beego.Router("/api/login", &controllers.ApiController{}, "POST:Login")
+	beego.Router("/api/loginv2", &controllers.ApiController{}, "POST:LoginV2")
 	beego.Router("/api/get-app-login", &controllers.ApiController{}, "GET:GetApplicationLogin")
 	beego.Router("/api/logout", &controllers.ApiController{}, "GET,POST:Logout")
 	beego.Router("/api/get-account", &controllers.ApiController{}, "GET:GetAccount")
